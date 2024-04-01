@@ -4,8 +4,8 @@ namespace mailProject._Entities
 {
     public class MailDetails
     {
-        [Required]
-        public int MailId { get; set; }
+        [Key]
+        public int Id { get; set; }
         [Required]
         [EmailAddress]
         public string Mail { get; set; }
