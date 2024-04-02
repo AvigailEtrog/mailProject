@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class MailContext : DbContext
 {
     public MailContext(DbContextOptions options) : base(options) { }
-    DbSet<MailDetails> Mails
+    public DbSet<MailDetails> Mails
     {
         get;
         set;

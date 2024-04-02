@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BL;
+using mailProject._Entities;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,11 +10,17 @@ namespace mailProject.Controllers
     [ApiController]
     public class mailController : ControllerBase
     {
+        IMailBL _mailBL;
+        public mailController(IMailBL mailBL)
+        {
+            _mailBL = mailBL; 
+        }
         // GET: api/<mailController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult< IEnumerable<MailDetails>>> Get()
         {
-            return new string[] { "value1", "value2" };
+            IEnumerable<MailDetails> mails = await _mailBL.getAllMailsAsync();
+            return mails != null ? Ok(mails) : NotFound();
         }
 
         // GET api/<mailController>/5
@@ -24,8 +32,11 @@ namespace mailProject.Controllers
 
         // POST api/<mailController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> Post([FromBody] MailDetails mail)
         {
+            MailDetails newMail = await _mailBL.createNewMailAsync(mail);
+            return newMail != null ? CreatedAtAction(nameof(Get), new { id = newMail.Id }, newMail) : NoContent();
+             
         }
 
         // PUT api/<mailController>/5
@@ -38,6 +49,16 @@ namespace mailProject.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+
+        // GET: api/<mailController>
+        [HttpGet]
+        [Route("sendMail")]
+        public async Task<ActionResult<string>> SendMail()
+        {
+            string massage = await _mailBL.sendMails();
+            return Ok(massage);
+           
         }
     }
 }
